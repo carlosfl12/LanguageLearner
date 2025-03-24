@@ -16,7 +16,7 @@ export const Navbar = () => {
                     <Link href="/lessons" className="text-gray-600 hover:text-blue-600">
                         Lecciones
                     </Link>
-                    {!loading && ( user ? (<Link href="/dashboard" className="bg-blue-100 text-blue-600 px-4 py-2 rounded-l">
+                    {!loading && ( user ? (<Link href="/profile" className="bg-blue-100 text-blue-600 px-4 py-2 rounded-l">
                         {user.displayName || "Mi cuenta"}
                     </Link>) : (
                         <Link href="/login" className="bg-blue-600 text-white px-4 py-2 rounded-lg">

@@ -1,3 +1,4 @@
+"use client"
 import { useAuth } from '@/context/AuthContext';
 import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import { auth } from '@/lib/firebase';
@@ -20,4 +21,5 @@ export const LoginForm = () => {
       </button>
     </div>
   );
+
 };

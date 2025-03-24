@@ -1,39 +1,45 @@
-"use client";
-import { useEffect, useState } from 'react';
-import { lessons } from '@/lib/lessonsData';
-import { getUserProgress } from '@/lib/firestoreService';
-import { useUserStore } from '@/store/useUserStore';
-import LessonCard from '@/components/LessonCard';
+import { Navbar } from '@/components/Navbar';
+import { getLessons } from '@/lib/firebase';
+import { Lesson } from '@/lib/types';
+import Link from 'next/link';
 
-export default function LessonsPage() {
-  const userId = useUserStore((state) => state.userId);
-  const [userProgress, setUserProgress] = useState<any>({});
-
-  useEffect(() => {
-    if (userId) {
-      getUserProgress(userId).then((progress) => {
-        if (progress) setUserProgress(progress.lessons);
-      });
-    }
-  }, [userId]);
+export default async function LessonsPage() {
+  const lessons: Lesson[] = await getLessons();
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">Your Lessons 📚</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {lessons.map((lesson, index) => {
-          const unlocked = index === 0 || userProgress[lessons[index - 1].id]?.completed;
-          const progressXP = userProgress[lesson.id]?.xp || 0;
-          const completed = userProgress[lesson.id]?.completed || false;
+    <div className='w-full bg-gray-600 p-4 shadow-lg'>
+      <Navbar/>
+      <div className="max-w-6xl mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-6">📚 Available Lessons</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {lessons.map((lesson) => {
+            const xp = (lesson.words?.length || 0) * 10;
+            const progress = Math.floor(Math.random() * 100); // Simulación de progreso
 
-          return (
-            <LessonCard
-              key={lesson.id}
-              lesson={{ ...lesson, xp: progressXP, completed }}
-              unlocked={unlocked}
-            />
-          );
-        })}
+            return (
+              <Link href={`/lessons/${lesson.id}`} key={lesson.id}>
+                <div className="bg-white rounded-2xl shadow-lg p-5 hover:shadow-xl transition cursor-pointer border border-gray-100">
+                  <h2 className="text-xl font-semibold mb-1">🧠 {lesson.title}</h2>
+                  <p className="text-sm text-gray-600 mb-4">{lesson.description}</p>
+
+                  {/* Progress Bar */}
+                  <div className="mb-3">
+                    <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-purple-500"
+                        style={{ width: `${progress}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">{progress}% completed</p>
+                  </div>
+
+                  {/* XP */}
+                  <p className="text-sm font-medium text-purple-700">⭐ {xp} XP</p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
